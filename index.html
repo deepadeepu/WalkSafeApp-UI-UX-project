@@ -1,241 +1,1583 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Walking Safety UX Case Study</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: #0f172a;
-      color: #e2e8f0;
-      line-height: 1.6;
-    }
-    .container {
-      max-width: 1100px;
-      margin: auto;
-      padding: 2rem;
-    }
-    header {
-      text-align: center;
-      padding: 4rem 1rem;
-    }
-    header h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
-    header p {
-      color: #94a3b8;
-    }
-    section {
-      margin-bottom: 3rem;
-    }
-    h2 {
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
-      border-left: 4px solid #38bdf8;
-      padding-left: 10px;
-    }
-    .card {
-      background: #1e293b;
-      padding: 1.5rem;
-      border-radius: 16px;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1rem;
-    }
-    .highlight {
-      color: #38bdf8;
-      font-weight: 600;
-    }
-    footer {
-      text-align: center;
-      padding: 2rem;
-      color: #64748b;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WalkSafe — UX Research Case Study</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0e0e11;
+    --paper: #f5f2ec;
+    --sage: #3d6b5a;
+    --sage-light: #c4d9cf;
+    --amber: #c97b2e;
+    --amber-light: #f0dfc0;
+    --coral: #c25144;
+    --sky: #2c5f7e;
+    --sky-light: #b8d4e4;
+    --rule: rgba(14,14,17,0.12);
+    --serif: 'Playfair Display', Georgia, serif;
+    --sans: 'DM Sans', system-ui, sans-serif;
+    --mono: 'DM Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999; opacity: 0.4;
+  }
+
+  /* ── COVER PAGE ── */
+  .cover {
+    min-height: 100vh;
+    background: var(--ink);
+    color: var(--paper);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover-bg-shape {
+    position: absolute;
+    top: -20%; right: -10%;
+    width: 70vw; height: 120vh;
+    background: var(--sage);
+    border-radius: 60% 0 0 40%;
+    opacity: 0.18;
+  }
+
+  .cover-accent-ring {
+    position: absolute;
+    bottom: -15%; left: 5%;
+    width: 40vw; height: 40vw;
+    border: 2px solid var(--amber);
+    border-radius: 50%;
+    opacity: 0.2;
+  }
+
+  .cover-left {
+    padding: 80px 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative; z-index: 2;
+  }
+
+  .cover-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--amber);
+    border: 1px solid var(--amber);
+    display: inline-block;
+    padding: 6px 14px;
+    width: fit-content;
+  }
+
+  .cover-headline {
+    font-family: var(--serif);
+    font-size: clamp(54px, 7vw, 96px);
+    line-height: 1.0;
+    font-weight: 900;
+    margin-top: 48px;
+  }
+
+  .cover-headline em {
+    font-style: italic;
+    color: var(--amber);
+  }
+
+  .cover-sub {
+    font-size: 16px;
+    line-height: 1.6;
+    color: rgba(245,242,236,0.65);
+    margin-top: 28px;
+    max-width: 380px;
+  }
+
+  .cover-meta {
+    display: flex; gap: 48px; margin-top: 64px;
+  }
+
+  .cover-meta-item {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+
+  .cover-meta-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(245,242,236,0.4);
+  }
+
+  .cover-meta-value {
+    font-size: 14px; font-weight: 500;
+    color: var(--paper);
+  }
+
+  .cover-right {
+    display: flex; align-items: center; justify-content: center;
+    position: relative; z-index: 2; padding: 80px 60px;
+  }
+
+  .cover-stat-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2px;
+    width: 100%; max-width: 420px;
+  }
+
+  .cover-stat {
+    background: rgba(245,242,236,0.04);
+    border: 1px solid rgba(245,242,236,0.08);
+    padding: 32px 28px;
+    display: flex; flex-direction: column; gap: 8px;
+    transition: background 0.3s;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .cover-stat:hover { background: rgba(245,242,236,0.08); }
+
+  .cover-stat-num {
+    font-family: var(--serif);
+    font-size: 52px; line-height: 1;
+    font-weight: 900; color: var(--amber);
+  }
+
+  .cover-stat-label {
+    font-size: 12px; color: rgba(245,242,236,0.55);
+    line-height: 1.4;
+  }
+
+  /* ── GENERAL SECTION STYLES ── */
+  section {
+    padding: 100px 0;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-left: 60px; padding-right: 60px;
+  }
+
+  .section-divider {
+    height: 1px;
+    background: var(--rule);
+    margin: 0 60px;
+  }
+
+  .section-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+
+  .section-eyebrow::after {
+    content: '';
+    height: 1px; width: 48px;
+    background: var(--sage); opacity: 0.4;
+  }
+
+  h2.section-title {
+    font-family: var(--serif);
+    font-size: clamp(36px, 4vw, 56px);
+    line-height: 1.1;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  h2.section-title em { font-style: italic; color: var(--sage); }
+
+  .section-lead {
+    font-size: 17px;
+    color: rgba(14,14,17,0.6);
+    max-width: 600px;
+    line-height: 1.7;
+    margin-bottom: 60px;
+  }
+
+  /* ── INTRO SECTION ── */
+  .intro-grid {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 60px; align-items: start;
+  }
+
+  .intro-pullquote {
+    font-family: var(--serif);
+    font-size: 26px;
+    line-height: 1.5;
+    font-style: italic;
+    border-left: 3px solid var(--amber);
+    padding-left: 28px;
+    color: var(--ink);
+    margin: 40px 0;
+  }
+
+  .intro-sidebar {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 40px;
+    position: sticky; top: 40px;
+  }
+
+  .sidebar-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 24px;
+  }
+
+  .method-item {
+    display: flex; align-items: flex-start; gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(245,242,236,0.08);
+  }
+
+  .method-item:last-child { border-bottom: none; }
+
+  .method-num {
+    font-family: var(--mono);
+    font-size: 11px; color: var(--amber);
+    min-width: 24px;
+  }
+
+  .method-text {
+    font-size: 14px; line-height: 1.5;
+    color: rgba(245,242,236,0.7);
+  }
+
+  /* ── CHART STYLES ── */
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+
+  .chart-card {
+    background: white;
+    border: 1px solid var(--rule);
+    padding: 36px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .chart-card.full-width {
+    grid-column: 1 / -1;
+  }
+
+  .chart-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-bottom: 8px;
+    opacity: 0.5;
+  }
+
+  .chart-headline {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 32px;
+    line-height: 1.2;
+  }
+
+  /* Bar Charts */
+  .bar-chart { display: flex; flex-direction: column; gap: 14px; }
+
+  .bar-row {
+    display: grid;
+    grid-template-columns: 180px 1fr 44px;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .bar-label {
+    font-size: 13px;
+    font-weight: 400;
+    color: rgba(14,14,17,0.75);
+    text-align: right;
+  }
+
+  .bar-track {
+    height: 10px;
+    background: rgba(14,14,17,0.06);
+    border-radius: 0;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 0;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 1.2s cubic-bezier(0.16,1,0.3,1);
+  }
+
+  .bar-fill.sage { background: var(--sage); }
+  .bar-fill.amber { background: var(--amber); }
+  .bar-fill.coral { background: var(--coral); }
+  .bar-fill.sky { background: var(--sky); }
+
+  .bar-pct {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  /* Donut Charts (SVG-based) */
+  .donut-wrap {
+    display: flex; align-items: center; gap: 32px;
+  }
+
+  .donut-legend {
+    display: flex; flex-direction: column; gap: 10px;
+    flex: 1;
+  }
+
+  .legend-row {
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .legend-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .legend-text { font-size: 13px; color: rgba(14,14,17,0.75); }
+  .legend-pct { font-family: var(--mono); font-size: 12px; font-weight: 500; margin-left: auto; }
+
+  /* Big stat highlight */
+  .big-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    margin-bottom: 60px;
+  }
+
+  .big-stat {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 40px 32px;
+    display: flex; flex-direction: column; gap: 10px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .big-stat:nth-child(2) { background: var(--sage); }
+  .big-stat:nth-child(3) { background: var(--amber); color: var(--ink); }
+  .big-stat:nth-child(4) { background: var(--sky); }
+
+  .big-stat-num {
+    font-family: var(--serif);
+    font-size: 56px; line-height: 1;
+    font-weight: 900;
+  }
+
+  .big-stat-label {
+    font-size: 13px; line-height: 1.4;
+    opacity: 0.7;
+  }
+
+  /* ── PERSONAS ── */
+  .personas-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+
+  .persona-card {
+    background: white;
+    border: 1px solid var(--rule);
+    padding: 40px 32px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .persona-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+  }
+
+  .persona-card:nth-child(1)::before { background: var(--sage); }
+  .persona-card:nth-child(2)::before { background: var(--amber); }
+  .persona-card:nth-child(3)::before { background: var(--sky); }
+
+  .persona-avatar {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .persona-card:nth-child(1) .persona-avatar { background: var(--sage-light); }
+  .persona-card:nth-child(2) .persona-avatar { background: var(--amber-light); }
+  .persona-card:nth-child(3) .persona-avatar { background: var(--sky-light); }
+
+  .persona-name {
+    font-family: var(--serif);
+    font-size: 22px; font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .persona-type {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(14,14,17,0.4);
+    margin-bottom: 20px;
+  }
+
+  .persona-desc {
+    font-size: 14px; line-height: 1.6;
+    color: rgba(14,14,17,0.65);
+    margin-bottom: 24px;
+  }
+
+  .persona-tags {
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+
+  .persona-tag {
+    font-size: 11px; padding: 4px 10px;
+    border: 1px solid var(--rule);
+    color: rgba(14,14,17,0.6);
+  }
+
+  .persona-need {
+    margin-top: 20px;
+    padding: 16px;
+    background: var(--paper);
+    font-size: 13px;
+    line-height: 1.5;
+    color: rgba(14,14,17,0.7);
+    border-left: 2px solid;
+  }
+
+  .persona-card:nth-child(1) .persona-need { border-color: var(--sage); }
+  .persona-card:nth-child(2) .persona-need { border-color: var(--amber); }
+  .persona-card:nth-child(3) .persona-need { border-color: var(--sky); }
+
+  /* ── INSIGHTS ── */
+  .insights-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+
+  .insight-card {
+    padding: 44px 40px;
+    border: 1px solid var(--rule);
+    background: white;
+    animation: fadeUp 0.7s ease both;
+  }
+
+  .insight-card.highlight {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: transparent;
+  }
+
+  .insight-num {
+    font-family: var(--serif);
+    font-size: 72px; font-weight: 900;
+    line-height: 1;
+    opacity: 0.08;
+    position: absolute;
+    top: 20px; right: 30px;
+  }
+
+  .insight-card { position: relative; }
+
+  .insight-icon {
+    font-size: 28px; margin-bottom: 16px;
+  }
+
+  .insight-title {
+    font-family: var(--serif);
+    font-size: 20px; font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .insight-text {
+    font-size: 14px; line-height: 1.7;
+    color: rgba(14,14,17,0.65);
+  }
+
+  .insight-card.highlight .insight-text { color: rgba(245,242,236,0.6); }
+
+  /* ── WIREFRAMES / APP SCREENS ── */
+  .screens-wrap {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    align-items: start;
+  }
+
+  .screen {
+    display: flex; flex-direction: column; gap: 12px;
+  }
+
+  .screen-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(14,14,17,0.4);
+    text-align: center;
+  }
+
+  .phone-frame {
+    background: var(--ink);
+    border-radius: 40px;
+    padding: 16px;
+    aspect-ratio: 9/19;
+    position: relative;
+    box-shadow: 0 40px 80px rgba(14,14,17,0.2);
+    overflow: hidden;
+  }
+
+  .phone-notch {
+    width: 80px; height: 24px;
+    background: var(--ink);
+    border-radius: 0 0 14px 14px;
+    margin: 0 auto 8px;
+    position: relative; z-index: 10;
+  }
+
+  .phone-screen {
+    background: var(--paper);
+    border-radius: 28px;
+    height: calc(100% - 40px);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+
+  .app-topbar {
+    background: white;
+    padding: 12px 16px 8px;
+    border-bottom: 1px solid rgba(14,14,17,0.08);
+  }
+
+  .app-title-row {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .app-brand {
+    font-family: var(--serif);
+    font-size: 15px; font-weight: 700;
+  }
+
+  .app-dot { 
+    width: 6px; height: 6px; border-radius: 50%; 
+  }
+
+  .app-content {
+    flex: 1; overflow: hidden;
+    padding: 12px 14px;
+    display: flex; flex-direction: column; gap: 8px;
+    font-size: 10px;
+  }
+
+  .app-map-placeholder {
+    background: linear-gradient(135deg, var(--sage-light), var(--sky-light));
+    border-radius: 10px;
+    flex: 1;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+
+  .map-path {
+    position: absolute;
+    stroke: var(--sage);
+    stroke-width: 2;
+    fill: none;
+  }
+
+  .map-pin {
+    width: 12px; height: 12px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    position: absolute;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+
+  .map-pin.green { background: var(--sage); top: 40%; left: 35%; }
+  .map-pin.amber { background: var(--amber); top: 60%; left: 55%; }
+  .map-pin.red   { background: var(--coral); top: 30%; left: 60%; }
+
+  .app-search {
+    background: rgba(14,14,17,0.06);
+    border-radius: 8px;
+    padding: 6px 10px;
+    display: flex; align-items: center; gap: 6px;
+    font-size: 9px; color: rgba(14,14,17,0.4);
+  }
+
+  .app-route-card {
+    background: white;
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex; align-items: center; gap: 8px;
+    box-shadow: 0 1px 8px rgba(14,14,17,0.06);
+  }
+
+  .route-color-bar {
+    width: 4px; height: 36px; border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .route-info { flex: 1; }
+
+  .route-name {
+    font-weight: 500; font-size: 10px; margin-bottom: 2px;
+    color: var(--ink);
+  }
+
+  .route-tags { display: flex; gap: 4px; }
+
+  .route-tag {
+    font-size: 7px; padding: 1px 5px;
+    border-radius: 3px;
+    background: rgba(14,14,17,0.06);
+    color: rgba(14,14,17,0.5);
+  }
+
+  .route-score {
+    font-family: var(--mono);
+    font-size: 13px; font-weight: 500;
+    color: var(--sage);
+  }
+
+  .app-alert {
+    background: linear-gradient(135deg, #fff5f4, #ffe8e6);
+    border: 1px solid rgba(194,81,68,0.2);
+    border-radius: 8px;
+    padding: 8px 10px;
+    display: flex; align-items: flex-start; gap: 6px;
+  }
+
+  .alert-icon { font-size: 10px; flex-shrink: 0; margin-top: 1px; }
+  .alert-text { font-size: 8px; line-height: 1.4; color: rgba(14,14,17,0.6); }
+  .alert-text b { color: var(--coral); font-weight: 500; }
+
+  .app-rating-row {
+    display: flex; gap: 4px; margin-top: 2px;
+  }
+
+  .star { font-size: 8px; color: var(--amber); }
+
+  .report-btn {
+    background: var(--sage);
+    color: white;
+    border-radius: 8px;
+    padding: 8px;
+    text-align: center;
+    font-size: 9px; font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+
+  .nav-row {
+    display: flex; justify-content: space-around;
+    padding: 8px 0 4px;
+    background: white;
+    border-top: 1px solid rgba(14,14,17,0.06);
+  }
+
+  .nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .nav-icon { font-size: 12px; }
+  .nav-label { font-size: 6px; color: rgba(14,14,17,0.4); }
+  .nav-item.active .nav-label { color: var(--sage); font-weight: 500; }
+
+  /* ── HOW IT MIGHT WORK ── */
+  .flow-steps {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    position: relative;
+  }
+
+  .flow-steps::before {
+    content: '';
+    position: absolute;
+    top: 28px; left: 10%; right: 10%;
+    height: 1px;
+    background: repeating-linear-gradient(to right, var(--sage) 0, var(--sage) 6px, transparent 6px, transparent 14px);
+  }
+
+  .flow-step {
+    display: flex; flex-direction: column; align-items: center; gap: 16px;
+    padding: 0 16px; text-align: center;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .flow-circle {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid var(--sage);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    position: relative; z-index: 2;
+    box-shadow: 0 0 0 6px var(--paper);
+  }
+
+  .flow-step-title {
+    font-size: 13px; font-weight: 500;
+    color: var(--ink);
+  }
+
+  .flow-step-text {
+    font-size: 12px; line-height: 1.5;
+    color: rgba(14,14,17,0.5);
+  }
+
+  /* ── RECOMMENDATIONS ── */
+  .rec-list {
+    display: grid; gap: 2px;
+  }
+
+  .rec-item {
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    align-items: center; gap: 32px;
+    padding: 28px 32px;
+    background: white;
+    border: 1px solid var(--rule);
+    animation: fadeUp 0.6s ease both;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .rec-item:hover {
+    transform: translateX(4px);
+    box-shadow: -4px 0 0 var(--sage);
+  }
+
+  .rec-num {
+    font-family: var(--serif);
+    font-size: 40px; font-weight: 900;
+    color: var(--sage);
+    opacity: 0.25;
+    line-height: 1;
+  }
+
+  .rec-title {
+    font-family: var(--serif);
+    font-size: 20px; font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .rec-text { font-size: 14px; line-height: 1.6; color: rgba(14,14,17,0.6); }
+
+  .rec-priority {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+
+  .priority-high { background: var(--sage-light); color: var(--sage); }
+  .priority-med { background: var(--amber-light); color: var(--amber); }
+  .priority-low { background: var(--sky-light); color: var(--sky); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 60px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+
+  .footer-brand {
+    font-family: var(--serif);
+    font-size: 28px; font-weight: 900;
+  }
+
+  .footer-brand span { color: var(--amber); }
+
+  .footer-note {
+    font-size: 12px; color: rgba(245,242,236,0.35);
+    text-align: right; line-height: 1.7;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes drawIn {
+    from { stroke-dashoffset: 1000; }
+    to   { stroke-dashoffset: 0; }
+  }
+
+  .animated { opacity: 0; }
+  .animated.visible { animation: fadeUp 0.7s ease forwards; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .cover { grid-template-columns: 1fr; }
+    .cover-right { display: none; }
+    .intro-grid, .charts-grid, .personas-grid, .insights-grid, .screens-wrap, .flow-steps, .big-stat-grid { grid-template-columns: 1fr; }
+    section { padding-left: 24px; padding-right: 24px; }
+  }
+</style>
 </head>
 <body>
 
-<div class="container">
+<!-- ████ COVER ████ -->
+<div class="cover">
+  <div class="cover-bg-shape"></div>
+  <div class="cover-accent-ring"></div>
 
-<header>
-  <h1>Walking Safety UX Case Study</h1>
-  <p>Using secondary research to design safer urban walking experiences</p>
-</header>
-
-<section>
-  <h2>Overview</h2>
-  <div class="card">
-    <p>This project explores how <span class="highlight">urban walking safety</span> can be improved through thoughtful UX design. Using secondary research, the goal was to identify risks, user behaviors, and opportunities for intervention.</p>
-  </div>
-</section>
-
-<section>
-  <h2>Problem</h2>
-  <div class="card">
-    <p>Pedestrians often feel unsafe due to poor lighting, traffic risks, and lack of real-time safety information. Existing navigation apps prioritize speed over safety.</p>
-  </div>
-</section>
-
-<section>
-  <h2>Research Insights</h2>
-  <div class="grid">
-    <div class="card">
-      <h3>Lighting Matters</h3>
-      <p>Poorly lit streets significantly increase perceived danger, especially at night.</p>
+  <div class="cover-left">
+    <div class="cover-tag">UX Research Case Study</div>
+    <div>
+      <h1 class="cover-headline">Walk<em>Safe</em><br>Route App</h1>
+      <p class="cover-sub">A user research investigation into pedestrian safety perceptions, route decision-making, and the appetite for community-powered safety tools in local communities.</p>
     </div>
-    <div class="card">
-      <h3>Gender Differences</h3>
-      <p>Women report higher safety concerns and prefer well-populated routes.</p>
-    </div>
-    <div class="card">
-      <h3>Route Awareness</h3>
-      <p>Users lack access to real-time safety data when choosing routes.</p>
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <span class="cover-meta-label">Respondents</span>
+        <span class="cover-meta-value">20 Participants</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="cover-meta-label">Method</span>
+        <span class="cover-meta-value">Online Survey</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="cover-meta-label">Period</span>
+        <span class="cover-meta-value">Sep 2025</span>
+      </div>
     </div>
   </div>
-</section>
 
-<section>
-  <h2>User Needs</h2>
-  <div class="card">
-    <ul>
-      <li>Safe route recommendations</li>
-      <li>Real-time alerts (crime, hazards)</li>
-      <li>Visibility of lighting and foot traffic</li>
-      <li>Emergency assistance features</li>
-    </ul>
-  </div>
-</section>
-
-<section>
-  <h2>Solution</h2>
-  <div class="card">
-    <p>A mobile app that integrates safety data into navigation by prioritizing <span class="highlight">well-lit, populated, and lower-risk routes</span>.</p>
-  </div>
-</section>
-
-<section>
-  <h2>Key Features</h2>
-  <div class="grid">
-    <div class="card">
-      <h3>Safe Routing</h3>
-      <p>Routes optimized based on safety metrics instead of just speed.</p>
-    </div>
-    <div class="card">
-      <h3>Live Alerts</h3>
-      <p>Real-time notifications for nearby incidents.</p>
-    </div>
-    <div class="card">
-      <h3>Community Reports</h3>
-      <p>Users contribute safety insights and updates.</p>
-    </div>
-    <div class="card">
-      <h3>Emergency Mode</h3>
-      <p>Quick access to contacts and authorities.</p>
+  <div class="cover-right">
+    <div class="cover-stat-grid">
+      <div class="cover-stat" style="animation-delay:0.1s">
+        <div class="cover-stat-num">80%</div>
+        <div class="cover-stat-label">felt unsafe or unsure while walking</div>
+      </div>
+      <div class="cover-stat" style="animation-delay:0.2s">
+        <div class="cover-stat-num">90%</div>
+        <div class="cover-stat-label">would use or consider a safety route app</div>
+      </div>
+      <div class="cover-stat" style="animation-delay:0.3s">
+        <div class="cover-stat-num">95%</div>
+        <div class="cover-stat-label">willing to report incidents to help others</div>
+      </div>
+      <div class="cover-stat" style="animation-delay:0.4s">
+        <div class="cover-stat-num">#1</div>
+        <div class="cover-stat-label">Poor lighting — top safety concern cited</div>
+      </div>
     </div>
   </div>
-</section>
-
-<section>
-  <h2>Design Process</h2>
-  <div class="card">
-    <p><span class="highlight">Research → Synthesis → Ideation → Prototyping → Testing</span></p>
-  </div>
-</section>
-
-<section>
-  <h2>Impact</h2>
-  <div class="card">
-    <p>This solution empowers users to make informed decisions, increasing confidence and reducing perceived risk when walking in urban environments.</p>
-  </div>
-</section>
-
-<section>
-  <h2>Final UI Design (Figma Prototype)</h2>
-
-  <div class="card">
-    <p>Explore the updated interactive design prototype:</p>
-    <p><a href="https://www.figma.com/make/lk31j81BPni332CJBsINfn/Safety-Score-Visibility-Design?t=sZXrtsBDp771RjXZ-1" target="_blank" style="color:#38bdf8; font-weight:600;">Open Safety Score Visibility Design</a></p>
-  </div>
-
-  <div class="card">
-    <iframe 
-      src="https://froth-fixed-53286323.figma.site/" 
-      style="width:100%; height:500px; border:none; border-radius:12px;">
-    </iframe>
-    <p style="margin-top:10px;">This prototype focuses on safety score visibility, helping users quickly understand route safety and make informed decisions.</p>
-  </div>
-
-</section>
-
-<section>
-  <h2>Data Analysis</h2>
-
-  <div class="card">
-    <p>View full survey dataset: <a href="https://docs.google.com/spreadsheets/d/1BjH9Rm7Qh7HiUAYaPpUwokvDwwhfAbeehxj0EHVDmL4/edit?usp=sharing" target="_blank" style="color:#38bdf8;">Google Sheets Survey Results</a></p>
-  </div>
-
-  <div class="card">
-    <h3>Why People Walk</h3>
-    <canvas id="commuteChart"></canvas>
-  </div>
-
-  <div class="card">
-    <h3>Do People Feel Safe Walking Regularly?</h3>
-    <canvas id="safetyChart"></canvas>
-  </div>
-
-  <div class="card">
-    <h3>Key Insights</h3>
-    <ul>
-      <li><span class="highlight">Convenience and cost</span> are the main reasons people walk</li>
-      <li><span class="highlight">Safety concerns remain high</span>, especially during night travel</li>
-      <li><span class="highlight">Perception of safety</span> directly affects route choice</li>
-    </ul>
-  </div>
-
-</section>
-
-<footer>
-  <p>UX Portfolio Project • Walking Safety Research</p>
-</footer>
-
 </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-    const commuteCtx = document.getElementById('commuteChart');
-    new Chart(commuteCtx, {
-      type: 'bar',
-      data: {
-        labels: ['Work', 'Exercise', 'Errands', 'Leisure'],
-        datasets: [{
-          label: 'Reasons for Walking',
-          data: [40, 25, 20, 15]
-        }]
-      },
-      options: { responsive: true }
-    });
+<!-- ████ INTRO ████ -->
+<section>
+  <div class="section-eyebrow">01 — Overview</div>
+  <div class="intro-grid">
+    <div>
+      <h2 class="section-title">Why do people feel <em>unsafe</em> on foot?</h2>
+      <p>Walking is one of the most fundamental human activities — yet for a significant portion of people, it carries a quiet anxiety. This research set out to understand the lived experiences of everyday walkers, what makes them feel vulnerable, how they currently navigate risk, and whether a community-powered safety app could meaningfully address their needs.</p>
+      <blockquote class="intro-pullquote">"Walking safety for me includes traffic — our daily path does not have separate lanes for walking. We also have to consider chain snatchers and stray dogs."<br><small style="font-family:var(--mono);font-size:12px;letter-spacing:.1em;opacity:.5;font-style:normal">— Survey Participant, 46–60 age group</small></blockquote>
+      <p>Twenty respondents participated across age groups, walking frequencies, and use cases. The findings reveal a consistent, unmet need: walkers want safer routes, real-time alerts, and a trustworthy community layer — but they're currently navigating largely alone, relying on familiarity and intuition.</p>
+    </div>
+    <div class="intro-sidebar">
+      <div class="sidebar-title">Research Approach</div>
+      <div class="method-item">
+        <span class="method-num">01</span>
+        <span class="method-text"><strong style="color:var(--amber)">Secondary Survey</strong> — 12-question structured online survey distributed to local community walkers</span>
+      </div>
+      <div class="method-item">
+        <span class="method-num">02</span>
+        <span class="method-text"><strong style="color:var(--amber)">20 Respondents</strong> — Diverse age range (16–60+), walking frequencies from daily commuters to leisure walkers</span>
+      </div>
+      <div class="method-item">
+        <span class="method-num">03</span>
+        <span class="method-text"><strong style="color:var(--amber)">Mixed Questions</strong> — Single-select, multi-select, and open-ended responses across safety, behaviour, and product desirability</span>
+      </div>
+      <div class="method-item">
+        <span class="method-num">04</span>
+        <span class="method-text"><strong style="color:var(--amber)">Analysis</strong> — Frequency analysis, theme clustering, persona synthesis, and feature prioritisation</span>
+      </div>
+    </div>
+  </div>
+</section>
 
-    const safetyCtx = document.getElementById('safetyChart');
-    new Chart(safetyCtx, {
-      type: 'doughnut',
-      data: {
-        labels: ['Feel Safe', 'Neutral', 'Feel Unsafe'],
-        datasets: [{
-          label: 'Safety Perception',
-          data: [20, 25, 55]
-        }]
-      },
-      options: { responsive: true }
-    });
-  </script>
+<div class="section-divider"></div>
+
+<!-- ████ KEY STATS ████ -->
+<section>
+  <div class="section-eyebrow">02 — By the Numbers</div>
+  <h2 class="section-title">The <em>data</em> at a glance</h2>
+  <p class="section-lead">Four headline findings that define the opportunity for WalkSafe.</p>
+
+  <div class="big-stat-grid">
+    <div class="big-stat animated">
+      <div class="big-stat-num">60%</div>
+      <div class="big-stat-label">said "Yes" — they have felt unsafe while walking</div>
+    </div>
+    <div class="big-stat animated" style="animation-delay:0.1s">
+      <div class="big-stat-num">55%</div>
+      <div class="big-stat-label">would "definitely" use a safety route app</div>
+    </div>
+    <div class="big-stat animated" style="animation-delay:0.2s">
+      <div class="big-stat-num">50%</div>
+      <div class="big-stat-label">rely only on familiar routes — limiting their freedom</div>
+    </div>
+    <div class="big-stat animated" style="animation-delay:0.3s">
+      <div class="big-stat-num">75%</div>
+      <div class="big-stat-label">trust crowdsourced reports "somewhat" or more</div>
+    </div>
+  </div>
+
+  <div class="charts-grid">
+
+    <!-- Safety Concerns -->
+    <div class="chart-card animated">
+      <div class="chart-title">Q — What made you feel unsafe?</div>
+      <div class="chart-headline">Top Safety Concerns</div>
+      <div class="bar-chart">
+        <div class="bar-row">
+          <div class="bar-label">Poor lighting</div>
+          <div class="bar-track"><div class="bar-fill sage" data-pct="75"></div></div>
+          <div class="bar-pct">75%</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Isolated streets</div>
+          <div class="bar-track"><div class="bar-fill sage" data-pct="63"></div></div>
+          <div class="bar-pct">63%</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Unsafe crossings</div>
+          <div class="bar-track"><div class="bar-fill amber" data-pct="56"></div></div>
+          <div class="bar-pct">56%</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Stalking / followed</div>
+          <div class="bar-track"><div class="bar-fill coral" data-pct="38"></div></div>
+          <div class="bar-pct">38%</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Harassment</div>
+          <div class="bar-track"><div class="bar-fill coral" data-pct="25"></div></div>
+          <div class="bar-pct">25%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature Priority -->
+    <div class="chart-card animated" style="animation-delay:0.1s">
+      <div class="chart-title">Q — Which features are most valuable?</div>
+      <div class="chart-headline">Desired App Features</div>
+      <div class="bar-chart">
+        <div class="bar-row">
+          <div class="bar-label">Real-time alerts</div>
+          <div class="bar-track"><div class="bar-fill sky" data-pct="80"></div></div>
+          <div class="bar-pct">80%</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Safety route ratings</div>
+          <div class="bar-track"><div class="bar-fill sky" data-pct="75"></div></div>
+          <div class="bar-pct">75%</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">User reviews / photos</div>
+          <div class="bar-track"><div class="bar-fill sage" data-pct="55"></div></div>
+          <div class="bar-pct">55%</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Scenic / quiet routes</div>
+          <div class="bar-track"><div class="bar-fill sage" data-pct="55"></div></div>
+          <div class="bar-pct">55%</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Anonymous reporting</div>
+          <div class="bar-track"><div class="bar-fill amber" data-pct="25"></div></div>
+          <div class="bar-pct">25%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Route Decision -->
+    <div class="chart-card animated">
+      <div class="chart-title">Q — How do you decide your walking route?</div>
+      <div class="chart-headline">Current Route Strategy</div>
+      <div class="donut-wrap">
+        <svg width="120" height="120" viewBox="0 0 120 120" id="donut1">
+          <circle cx="60" cy="60" r="46" fill="none" stroke="#e8e5df" stroke-width="18"/>
+          <circle cx="60" cy="60" r="46" fill="none" stroke="#3d6b5a" stroke-width="18"
+            stroke-dasharray="289 289" stroke-dashoffset="289"
+            transform="rotate(-90 60 60)" id="seg1a"
+            style="transition: stroke-dashoffset 1.5s ease"/>
+          <circle cx="60" cy="60" r="46" fill="none" stroke="#c97b2e" stroke-width="18"
+            stroke-dasharray="289 289" stroke-dashoffset="289"
+            transform="rotate(-90 60 60)" id="seg1b"/>
+          <circle cx="60" cy="60" r="46" fill="none" stroke="#2c5f7e" stroke-width="18"
+            stroke-dasharray="289 289" stroke-dashoffset="289"
+            transform="rotate(-90 60 60)" id="seg1c"/>
+          <circle cx="60" cy="60" r="46" fill="none" stroke="#c25144" stroke-width="18"
+            stroke-dasharray="289 289" stroke-dashoffset="289"
+            transform="rotate(-90 60 60)" id="seg1d"/>
+        </svg>
+        <div class="donut-legend">
+          <div class="legend-row">
+            <div class="legend-dot" style="background:var(--sage)"></div>
+            <span class="legend-text">Familiar routes only</span>
+            <span class="legend-pct">50%</span>
+          </div>
+          <div class="legend-row">
+            <div class="legend-dot" style="background:var(--amber)"></div>
+            <span class="legend-text">Google/Apple Maps</span>
+            <span class="legend-pct">20%</span>
+          </div>
+          <div class="legend-row">
+            <div class="legend-dot" style="background:var(--sky)"></div>
+            <span class="legend-text">Crowd/lighting-based</span>
+            <span class="legend-pct">15%</span>
+          </div>
+          <div class="legend-row">
+            <div class="legend-dot" style="background:var(--coral)"></div>
+            <span class="legend-text">Don't think about it</span>
+            <span class="legend-pct">15%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- App Adoption -->
+    <div class="chart-card animated" style="animation-delay:0.1s">
+      <div class="chart-title">Q — Would you use a walking safety app?</div>
+      <div class="chart-headline">App Adoption Likelihood</div>
+      <div class="donut-wrap">
+        <svg width="120" height="120" viewBox="0 0 120 120" id="donut2">
+          <circle cx="60" cy="60" r="46" fill="none" stroke="#e8e5df" stroke-width="18"/>
+          <circle cx="60" cy="60" r="46" fill="none" stroke="#3d6b5a" stroke-width="18"
+            stroke-dasharray="289 289" stroke-dashoffset="289"
+            transform="rotate(-90 60 60)" id="seg2a"/>
+          <circle cx="60" cy="60" r="46" fill="none" stroke="#c97b2e" stroke-width="18"
+            stroke-dasharray="289 289" stroke-dashoffset="289"
+            transform="rotate(-90 60 60)" id="seg2b"/>
+          <circle cx="60" cy="60" r="46" fill="none" stroke="#c25144" stroke-width="18"
+            stroke-dasharray="289 289" stroke-dashoffset="289"
+            transform="rotate(-90 60 60)" id="seg2c"/>
+        </svg>
+        <div class="donut-legend">
+          <div class="legend-row">
+            <div class="legend-dot" style="background:var(--sage)"></div>
+            <span class="legend-text">Yes, definitely</span>
+            <span class="legend-pct">55%</span>
+          </div>
+          <div class="legend-row">
+            <div class="legend-dot" style="background:var(--amber)"></div>
+            <span class="legend-text">Maybe, if accurate</span>
+            <span class="legend-pct">35%</span>
+          </div>
+          <div class="legend-row">
+            <div class="legend-dot" style="background:var(--coral)"></div>
+            <span class="legend-text">Not really</span>
+            <span class="legend-pct">10%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ████ PERSONAS ████ -->
+<section>
+  <div class="section-eyebrow">03 — User Personas</div>
+  <h2 class="section-title">Who are our <em>walkers?</em></h2>
+  <p class="section-lead">Three archetypal personas distilled from the survey data — each with distinct needs, concerns, and levels of tech adoption.</p>
+
+  <div class="personas-grid">
+
+    <div class="persona-card animated">
+      <div class="persona-avatar">🏃‍♀️</div>
+      <div class="persona-name">Priya, 34</div>
+      <div class="persona-type">The Daily Commuter</div>
+      <p class="persona-desc">Walks to work or school multiple times a day. Safety isn't optional — it's essential. Has experienced harassment and relies on familiar routes out of necessity, not preference.</p>
+      <div class="persona-tags">
+        <span class="persona-tag">Daily walker</span>
+        <span class="persona-tag">Female</span>
+        <span class="persona-tag">Urban</span>
+        <span class="persona-tag">30–45</span>
+      </div>
+      <div class="persona-need">
+        <strong>Core need:</strong> "Tell me which streets are safe before I leave the house — not after something happens."
+      </div>
+    </div>
+
+    <div class="persona-card animated" style="animation-delay:0.1s">
+      <div class="persona-avatar">🧘</div>
+      <div class="persona-name">Marcus, 42</div>
+      <div class="persona-type">The Fitness Walker</div>
+      <p class="persona-desc">Walks several times a week for exercise. Less concerned with personal safety but wants scenic, quiet routes. Open to contributing to safety tools if it's low-friction.</p>
+      <div class="persona-tags">
+        <span class="persona-tag">Exercise</span>
+        <span class="persona-tag">Suburban</span>
+        <span class="persona-tag">Moderate risk</span>
+        <span class="persona-tag">30–45</span>
+      </div>
+      <div class="persona-need">
+        <strong>Core need:</strong> "Show me peaceful routes with good scenery. I'll share reports if it takes less than 30 seconds."
+      </div>
+    </div>
+
+    <div class="persona-card animated" style="animation-delay:0.2s">
+      <div class="persona-avatar">🧳</div>
+      <div class="persona-name">Linda, 52</div>
+      <div class="persona-type">The Cautious Explorer</div>
+      <p class="persona-desc">Older walker who deeply values safety. Has felt unsafe due to traffic and poor infrastructure. Highly motivated to use an app but needs simplicity and accessibility features.</p>
+      <div class="persona-tags">
+        <span class="persona-tag">Leisure</span>
+        <span class="persona-tag">46–60</span>
+        <span class="persona-tag">Accessibility</span>
+        <span class="persona-tag">High trust</span>
+      </div>
+      <div class="persona-need">
+        <strong>Core need:</strong> "I need to know about traffic hazards and stray dogs — and the app should be simple to use."
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ████ KEY INSIGHTS ████ -->
+<section>
+  <div class="section-eyebrow">04 — Research Insights</div>
+  <h2 class="section-title">What the data <em>tells us</em></h2>
+  <p class="section-lead">Six synthesised insights that should directly inform the product design and prioritisation.</p>
+
+  <div class="insights-grid">
+
+    <div class="insight-card animated">
+      <div class="insight-num">1</div>
+      <div class="insight-icon">💡</div>
+      <div class="insight-title">Safety is a baseline expectation, not a feature</div>
+      <p class="insight-text">80% of respondents felt unsafe or unsure. This is not a niche concern — it's a universal pain point. Safety features must be the core offering, not an add-on.</p>
+    </div>
+
+    <div class="insight-card highlight animated" style="animation-delay:0.1s">
+      <div class="insight-num">2</div>
+      <div class="insight-icon">🔦</div>
+      <div class="insight-title">Lighting is the #1 environmental hazard</div>
+      <p class="insight-text">Poor lighting was cited in 75% of unsafe experiences — more than isolation or traffic. A "lighting layer" on route maps could be the most impactful single feature to build first.</p>
+    </div>
+
+    <div class="insight-card animated" style="animation-delay:0.1s">
+      <div class="insight-num">3</div>
+      <div class="insight-icon">🗺️</div>
+      <div class="insight-title">Familiarity as a proxy for safety is limiting</div>
+      <p class="insight-text">50% rely on familiar routes only — not because they're safest, but because they're known. WalkSafe can unlock new routes by providing safety confidence data.</p>
+    </div>
+
+    <div class="insight-card animated" style="animation-delay:0.15s">
+      <div class="insight-num">4</div>
+      <div class="insight-icon">⚡</div>
+      <div class="insight-title">Real-time matters more than history</div>
+      <p class="insight-text">Real-time alerts was the #1 desired feature (80%), narrowly beating static safety ratings (75%). Users want live awareness, not just historical data snapshots.</p>
+    </div>
+
+    <div class="insight-card animated">
+      <div class="insight-num">5</div>
+      <div class="insight-icon">🤝</div>
+      <div class="insight-title">Community trust exists — with nuance</div>
+      <p class="insight-text">75% trust crowdsourced reports "somewhat" or more. Only 5% distrust it outright. The data confirms appetite for a community model, but accuracy and credibility must be baked in from the start.</p>
+    </div>
+
+    <div class="insight-card animated" style="animation-delay:0.1s">
+      <div class="insight-num">6</div>
+      <div class="insight-icon">✍️</div>
+      <div class="insight-title">Contribution intent is conditional on effort</div>
+      <p class="insight-text">50% will "always" contribute. 45% will contribute "if it's quick/easy." This near-100% ceiling unlocks a rich data flywheel — but only if the reporting flow is frictionless (under 3 taps).</p>
+    </div>
+
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ████ APP SCREENS ████ -->
+<section>
+  <div class="section-eyebrow">05 — Design Concepts</div>
+  <h2 class="section-title">What WalkSafe <em>could look like</em></h2>
+  <p class="section-lead">Lo-fi wireframe concepts for the three core app screens informed directly by survey findings.</p>
+
+  <div class="screens-wrap">
+
+    <!-- Screen 1: Route Explorer -->
+    <div class="screen animated">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="app-topbar">
+            <div class="app-title-row">
+              <span class="app-brand">WalkSafe</span>
+              <div style="display:flex;gap:4px">
+                <div class="app-dot" style="background:var(--sage)"></div>
+                <div class="app-dot" style="background:var(--amber)"></div>
+              </div>
+            </div>
+            <div class="app-search" style="margin-top:8px">
+              <span>🔍</span>
+              <span>Search a destination...</span>
+            </div>
+          </div>
+          <div class="app-content">
+            <div class="app-map-placeholder">
+              <svg style="position:absolute;inset:0;width:100%;height:100%">
+                <path d="M30,80 Q60,50 90,60 Q110,65 130,40" stroke="#3d6b5a" stroke-width="2.5" fill="none" stroke-dasharray="5,3" opacity="0.7"/>
+                <path d="M30,80 Q50,90 80,100 Q110,110 130,40" stroke="#c97b2e" stroke-width="2" fill="none" opacity="0.5"/>
+              </svg>
+              <div class="map-pin green"></div>
+              <div class="map-pin amber"></div>
+              <div class="map-pin red"></div>
+            </div>
+            <div class="app-route-card">
+              <div class="route-color-bar" style="background:var(--sage)"></div>
+              <div class="route-info">
+                <div class="route-name">Green Route — 12 min</div>
+                <div class="route-tags">
+                  <span class="route-tag">Well-lit</span>
+                  <span class="route-tag">Busy street</span>
+                  <span class="route-tag">Recommended</span>
+                </div>
+              </div>
+              <div class="route-score">9.2</div>
+            </div>
+            <div class="app-route-card">
+              <div class="route-color-bar" style="background:var(--amber)"></div>
+              <div class="route-info">
+                <div class="route-name">Amber Route — 9 min</div>
+                <div class="route-tags">
+                  <span class="route-tag">Faster</span>
+                  <span class="route-tag">Low lighting</span>
+                </div>
+              </div>
+              <div class="route-score" style="color:var(--amber)">6.1</div>
+            </div>
+          </div>
+          <div class="nav-row">
+            <div class="nav-item active"><div class="nav-icon">🗺️</div><div class="nav-label">Map</div></div>
+            <div class="nav-item"><div class="nav-icon">⚠️</div><div class="nav-label">Alerts</div></div>
+            <div class="nav-item"><div class="nav-icon">📍</div><div class="nav-label">Report</div></div>
+            <div class="nav-item"><div class="nav-icon">👤</div><div class="nav-label">Profile</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-label">Route Explorer</div>
+    </div>
+
+    <!-- Screen 2: Live Alerts -->
+    <div class="screen animated" style="animation-delay:0.15s">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="app-topbar">
+            <div class="app-title-row">
+              <span class="app-brand">Live Alerts</span>
+              <span style="font-size:8px;font-family:var(--mono);color:var(--coral)">● Live</span>
+            </div>
+          </div>
+          <div class="app-content">
+            <div style="font-family:var(--mono);font-size:8px;color:rgba(14,14,17,0.35);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px">Near you — last 2 hours</div>
+
+            <div class="app-alert">
+              <div class="alert-icon">🔦</div>
+              <div class="alert-text"><b>Streetlight out</b> — Oak Ave & 5th St. Reported 23 min ago. 3 people found this helpful.</div>
+            </div>
+
+            <div class="app-alert" style="background:linear-gradient(135deg,#fff8f0,#ffecd6);border-color:rgba(201,123,46,0.2)">
+              <div class="alert-icon">🚶</div>
+              <div class="alert-text"><b>Busy pavement</b> — Market St near Station. Unusually crowded right now.</div>
+            </div>
+
+            <div class="app-alert">
+              <div class="alert-icon">🚗</div>
+              <div class="alert-text"><b>Unsafe crossing</b> — Bridge Rd pedestrian crossing. No signal light, reported by 5 walkers.</div>
+            </div>
+
+            <div style="margin-top:4px">
+              <div style="font-family:var(--mono);font-size:8px;color:rgba(14,14,17,0.35);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Community verified</div>
+              <div style="display:flex;align-items:center;gap:6px;background:white;border-radius:8px;padding:8px 10px;box-shadow:0 1px 6px rgba(0,0,0,.05)">
+                <span style="font-size:10px">✅</span>
+                <div style="font-size:8px;line-height:1.4;color:rgba(14,14,17,0.6)"><b style="color:var(--ink)">Garden Path</b> — Marked safe by 12 walkers this week. Great lighting.</div>
+              </div>
+            </div>
+            <div class="report-btn" style="margin-top:auto">+ Report something</div>
+          </div>
+          <div class="nav-row">
+            <div class="nav-item"><div class="nav-icon">🗺️</div><div class="nav-label">Map</div></div>
+            <div class="nav-item active"><div class="nav-icon">⚠️</div><div class="nav-label">Alerts</div></div>
+            <div class="nav-item"><div class="nav-icon">📍</div><div class="nav-label">Report</div></div>
+            <div class="nav-item"><div class="nav-icon">👤</div><div class="nav-label">Profile</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-label">Live Alerts Feed</div>
+    </div>
+
+    <!-- Screen 3: Report Incident -->
+    <div class="screen animated" style="animation-delay:0.3s">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="app-topbar">
+            <div class="app-title-row">
+              <span class="app-brand">Report</span>
+              <span style="font-size:9px;color:rgba(14,14,17,0.4)">Anonymous</span>
+            </div>
+          </div>
+          <div class="app-content">
+            <div style="font-size:9px;color:rgba(14,14,17,0.5);margin-bottom:4px">What happened?</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+              <div style="background:var(--sage-light);border-radius:8px;padding:10px 8px;text-align:center;border:1.5px solid var(--sage);font-size:9px;font-weight:500;color:var(--sage)">🔦 Poor Lighting</div>
+              <div style="background:white;border-radius:8px;padding:10px 8px;text-align:center;border:1px solid rgba(14,14,17,.1);font-size:9px;color:rgba(14,14,17,.5)">🚶 Isolated Area</div>
+              <div style="background:white;border-radius:8px;padding:10px 8px;text-align:center;border:1px solid rgba(14,14,17,.1);font-size:9px;color:rgba(14,14,17,.5)">🚗 Traffic Danger</div>
+              <div style="background:white;border-radius:8px;padding:10px 8px;text-align:center;border:1px solid rgba(14,14,17,.1);font-size:9px;color:rgba(14,14,17,.5)">😟 Harassment</div>
+            </div>
+            <div style="font-size:9px;color:rgba(14,14,17,0.5);margin-top:4px">Rate severity</div>
+            <div class="app-rating-row">
+              <span class="star">★</span><span class="star">★</span><span class="star">★</span>
+              <span style="font-size:8px;color:rgba(14,14,17,.3)">★★</span>
+            </div>
+            <div style="font-size:9px;color:rgba(14,14,17,0.5);margin-top:4px">Location</div>
+            <div style="background:rgba(14,14,17,.04);border-radius:6px;padding:6px 8px;font-size:8px;color:rgba(14,14,17,.4);display:flex;align-items:center;gap:4px">
+              <span>📍</span> Using your current location
+            </div>
+            <div style="background:rgba(14,14,17,.04);border-radius:6px;padding:6px 8px;font-size:8px;color:rgba(14,14,17,.4);display:flex;align-items:center;gap:4px;margin-top:2px">
+              <span>🔒</span> Your identity is never shared
+            </div>
+            <div class="report-btn" style="margin-top:auto;background:var(--coral)">Submit Report</div>
+          </div>
+          <div class="nav-row">
+            <div class="nav-item"><div class="nav-icon">🗺️</div><div class="nav-label">Map</div></div>
+            <div class="nav-item"><div class="nav-icon">⚠️</div><div class="nav-label">Alerts</div></div>
+            <div class="nav-item active"><div class="nav-icon">📍</div><div class="nav-label">Report</div></div>
+            <div class="nav-item"><div class="nav-icon">👤</div><div class="nav-label">Profile</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-label">Quick Report (3-tap)</div>
+    </div>
+
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ████ USER FLOW ████ -->
+<section>
+  <div class="section-eyebrow">06 — Core User Journey</div>
+  <h2 class="section-title">The WalkSafe <em>experience flow</em></h2>
+  <p class="section-lead">From "I need to walk somewhere" to arriving safely — five key moments in the user journey.</p>
+
+  <div class="flow-steps">
+    <div class="flow-step animated">
+      <div class="flow-circle">🏠</div>
+      <div class="flow-step-title">Open App</div>
+      <p class="flow-step-text">User inputs destination. App loads local safety data and live alerts.</p>
+    </div>
+    <div class="flow-step animated" style="animation-delay:0.1s">
+      <div class="flow-circle">🗺️</div>
+      <div class="flow-step-title">Choose Route</div>
+      <p class="flow-step-text">Safety-rated route options appear. User picks based on score, time, and active alerts.</p>
+    </div>
+    <div class="flow-step animated" style="animation-delay:0.2s">
+      <div class="flow-circle">⚡</div>
+      <div class="flow-step-title">Walk Guided</div>
+      <p class="flow-step-text">Real-time alerts push en route. Lighting warnings, incident proximity, safe rest points.</p>
+    </div>
+    <div class="flow-step animated" style="animation-delay:0.3s">
+      <div class="flow-circle">📍</div>
+      <div class="flow-step-title">Report Issues</div>
+      <p class="flow-step-text">User taps to report an unsafe moment anonymously in under 3 taps. Data feeds the community.</p>
+    </div>
+    <div class="flow-step animated" style="animation-delay:0.4s">
+      <div class="flow-circle">🎯</div>
+      <div class="flow-step-title">Arrive Safe</div>
+      <p class="flow-step-text">Trip summary shows route safety score. Community data improves for future walkers.</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ████ RECOMMENDATIONS ████ -->
+<section>
+  <div class="section-eyebrow">07 — Design Recommendations</div>
+  <h2 class="section-title">What to <em>build first</em></h2>
+  <p class="section-lead">Prioritised recommendations for the WalkSafe MVP, ranked by impact and directly traceable to survey insights.</p>
+
+  <div class="rec-list">
+
+    <div class="rec-item animated">
+      <div class="rec-num">01</div>
+      <div>
+        <div class="rec-title">Lighting Layer on Route Maps</div>
+        <p class="rec-text">75% of "felt unsafe" responses cited poor lighting. Build a route overlay showing street lighting density — this single feature directly addresses the #1 concern and builds immediate credibility.</p>
+      </div>
+      <span class="rec-priority priority-high">Must Have</span>
+    </div>
+
+    <div class="rec-item animated" style="animation-delay:0.05s">
+      <div class="rec-num">02</div>
+      <div>
+        <div class="rec-title">Real-Time Community Alerts Feed</div>
+        <p class="rec-text">80% prioritised real-time alerts as the most valuable feature. Design a lightweight alert system using push notifications and an in-app feed. Prioritise recency signals and community verification to build trust.</p>
+      </div>
+      <span class="rec-priority priority-high">Must Have</span>
+    </div>
+
+    <div class="rec-item animated" style="animation-delay:0.1s">
+      <div class="rec-num">03</div>
+      <div>
+        <div class="rec-title">Safety-Scored Route Alternatives</div>
+        <p class="rec-text">50% only use familiar routes — limiting themselves to safety by inertia. Displaying safety scores (e.g., 9.2 / 10) on alternative routes gives users the confidence to explore new paths backed by data.</p>
+      </div>
+      <span class="rec-priority priority-high">Must Have</span>
+    </div>
+
+    <div class="rec-item animated" style="animation-delay:0.15s">
+      <div class="rec-num">04</div>
+      <div>
+        <div class="rec-title">3-Tap Anonymous Reporting Flow</div>
+        <p class="rec-text">95% of users are willing to report — but only if it's fast. Design a frictionless 3-tap reporting flow (category → severity → submit). Emphasise anonymity prominently to address trust concerns, especially for harassment reports.</p>
+      </div>
+      <span class="rec-priority priority-med">Should Have</span>
+    </div>
+
+    <div class="rec-item animated" style="animation-delay:0.2s">
+      <div class="rec-num">05</div>
+      <div>
+        <div class="rec-title">Accessibility & Quiet Route Filters</div>
+        <p class="rec-text">55% wanted scenic/quiet routes; 25% wanted accessibility info. Add filter controls (wheelchair-friendly, stroller-safe, quiet streets) to serve a broader audience — particularly older users and caregivers.</p>
+      </div>
+      <span class="rec-priority priority-low">Nice to Have</span>
+    </div>
+
+    <div class="rec-item animated" style="animation-delay:0.25s">
+      <div class="rec-num">06</div>
+      <div>
+        <div class="rec-title">Trust Architecture for Crowdsourced Data</div>
+        <p class="rec-text">75% trust crowdsourced data "somewhat" — not fully. Design trust-building elements: time-stamped reports, community verification votes, report decay (older reports fade), and transparent data provenance to close the credibility gap.</p>
+      </div>
+      <span class="rec-priority priority-med">Should Have</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- ████ FOOTER ████ -->
+<footer>
+  <div>
+    <div class="footer-brand">Walk<span>Safe</span></div>
+    <div style="font-size:12px;color:rgba(245,242,236,0.3);margin-top:8px">UX Research Case Study — September 2025</div>
+  </div>
+  <div class="footer-note">
+    Based on secondary survey data<br>
+    20 respondents · 12 questions · 1 shared goal<br>
+    <em style="color:rgba(245,242,236,0.2)">Safer streets, one walk at a time.</em>
+  </div>
+</footer>
+
+<script>
+// ── Intersection Observer for animate-in
+const animated = document.querySelectorAll('.animated');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: 0.15 });
+animated.forEach(el => observer.observe(el));
+
+// ── Bar chart animations
+const bars = document.querySelectorAll('.bar-fill');
+const barObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const pct = e.target.dataset.pct;
+      e.target.style.transform = `scaleX(${pct / 100})`;
+      barObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+bars.forEach(b => barObserver.observe(b));
+
+// ── Donut chart animations
+function animateDonut(segs, data) {
+  const circumference = 289;
+  let cumulative = 0;
+  segs.forEach((seg, i) => {
+    const pct = data[i] / 100;
+    const dash = circumference * pct;
+    const offset = circumference - (circumference * cumulative);
+    seg.style.strokeDasharray = `${dash} ${circumference - dash}`;
+    seg.style.strokeDashoffset = offset;
+    seg.style.transition = `stroke-dashoffset 1s ease ${i * 0.15}s, stroke-dasharray 1s ease ${i * 0.15}s`;
+    cumulative += pct;
+  });
+}
+
+const donut1Observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      // Route decision: 50, 20, 15, 15
+      animateDonut([
+        document.getElementById('seg1a'),
+        document.getElementById('seg1b'),
+        document.getElementById('seg1c'),
+        document.getElementById('seg1d')
+      ], [50, 20, 15, 15]);
+      // App adoption: 55, 35, 10
+      animateDonut([
+        document.getElementById('seg2a'),
+        document.getElementById('seg2b'),
+        document.getElementById('seg2c')
+      ], [55, 35, 10]);
+      donut1Observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+
+const donutEl = document.getElementById('donut1');
+if (donutEl) donut1Observer.observe(donutEl);
+</script>
 </body>
 </html>
